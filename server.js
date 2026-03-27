@@ -9,7 +9,12 @@ let webClients = [];
 wss.on('connection', (ws) => { webClients.push(ws); console.log("🟢 Web Panel Bağlandı!"); });
 
 function webSitesineGonder(veri) {
-    webClients.forEach(c => { if (c.readyState === WebSocket.OPEN) c.send(JSON.stringify(veri)); });
+    const payload = {
+        ...veri,
+        totalFame: veri.totalFame !== undefined ? veri.totalFame : totalFame,
+        totalSilver: veri.totalSilver !== undefined ? veri.totalSilver : totalSilver
+    };
+    webClients.forEach(c => { if (c.readyState === WebSocket.OPEN) c.send(JSON.stringify(payload)); });
 }
 
 let ITEM_LIST = {};
@@ -18,13 +23,14 @@ let OPERATION_CODE_MAP = {};
 let totalFame = 0;   // YENİ: Fame Sayacı
 let totalSilver = 0; // YENİ: Silver Sayacı
 let maxItemIndex = 0;
+let sonFameBakiyesi = null;
+let sonSilverBakiyesi = null;
 
-let GUVENLI_LOOT_EVENTLERI = new Set([26, 27, 61, 98, 99, 100, 274, 387, 388, 389, 607, 608, 609, 610]);
+let GUVENLI_LOOT_EVENTLERI = new Set([61, 98, 99, 100, 274, 387, 388, 389, 607, 608, 609, 610]);
+const ESNEK_KIMLIK_GEREKTIRMEYEN_EVENTLER = new Set([98, 99, 100, 387, 388, 389, 607, 608, 609, 610]);
 
 let EVENT_SOURCE_MAP = {
     61: "gather",
-    26: "inventory",
-    27: "inventory",
     98: "loot",
     99: "container",
     100: "container",
@@ -125,10 +131,7 @@ function lootMatrisiniYukle() {
             const operationCodes = matrix.operations
                 .map(o => Number(o.code))
                 .filter(code => !Number.isNaN(code));
-
-            if (operationCodes.length > 0) {
-                GUVENLI_LOOT_OPERASYONLARI = new Set(operationCodes);
-            }
+            GUVENLI_LOOT_OPERASYONLARI = new Set(operationCodes);
         }
 
         console.log("[✅] Loot matrisi yüklendi: event/operation filtreleri güncellendi.");
@@ -163,7 +166,7 @@ function localEventKataloguYukle() {
             OPERATION_CODE_MAP = opMap;
         }
 
-        console.log(`[✅] Yerel event kataloğu yüklendi:q${Object.keys(EVENT_CODE_MAP).length} event, ${Object.keys(OPERATION_CODE_MAP).length} operation.`);
+        console.log(`[✅] Yerel event kataloğu yüklendi: ${Object.keys(EVENT_CODE_MAP).length} event, ${Object.keys(OPERATION_CODE_MAP).length} operation.`);
     } catch (err) {
         console.log("[⚠️] Yerel event kataloğu okunamadı, uzaktan yüklenecek.");
     }
@@ -337,6 +340,46 @@ function lootDetayiOlustur(eventCode, params) {
     return lootOzetiUret(params);
 }
 
+function olaydaOyuncuVarMi(params, playerId) {
+    if (playerId === null || playerId === undefined) return false;
+    if (params['0'] === playerId || params['6'] === playerId) return true;
+
+    const tumSayilar = sayisalDegerleriTopla(params, []);
+    return tumSayilar.includes(playerId);
+}
+
+function bakiyeDegeriBul(params) {
+    const blacklist = new Set(['0', '6', '252', '253']);
+    const adaylar = [];
+
+    Object.entries(params).forEach(([k, v]) => {
+        if (blacklist.has(k)) return;
+        if (typeof v === 'number' && Number.isFinite(v) && v > 0) adaylar.push(v);
+    });
+
+    if (adaylar.length === 0) {
+        const tumSayilar = sayisalDegerleriTopla(params, []).filter(x => Number.isFinite(x) && x > 0);
+        return tumSayilar.length > 0 ? Math.max(...tumSayilar) : null;
+    }
+
+    return Math.max(...adaylar);
+}
+
+function silverMiktariBul(params) {
+    const anahtarAdaylari = ['5', '4', '3', '2', '1'];
+    for (const key of anahtarAdaylari) {
+        const n = Number(params[key]);
+        if (Number.isFinite(n) && n > 0 && n < 100000000) return n;
+    }
+
+    const tumSayilar = sayisalDegerleriTopla(params, [])
+        .map(Number)
+        .filter(n => Number.isFinite(n) && n > 0 && n < 100000000);
+
+    if (tumSayilar.length === 0) return null;
+    return Math.max(...tumSayilar);
+}
+
 const aoNet = new AONetwork();
 let myPlayerId = null;
 
@@ -349,9 +392,46 @@ lootMatrisiniYukle();
 aoNet.events.on(aoNet.AODecoder.messageType.Event, (context) => {
     let params = context.parameters;
     if (!params) return;
-    let eventCode = params['252'];
-    if (!eventCode) return;
+    let eventCode = Number(params['252']);
+    if (!Number.isFinite(eventCode)) return;
     const eventName = eventAdiBul(eventCode);
+
+    // Oyundaki gerçek bakiye eventlerinden silver/fame artışını yakala.
+    if (eventCode === 81) {
+        const yeniSilverBakiyesi = bakiyeDegeriBul(params);
+        if (yeniSilverBakiyesi !== null) {
+            if (sonSilverBakiyesi !== null) {
+                const delta = yeniSilverBakiyesi - sonSilverBakiyesi;
+                if (delta > 0) {
+                    totalSilver += delta;
+                    webSitesineGonder({
+                        tur: "Ekonomi",
+                        islem: "💰 Silver",
+                        detay: `+${delta} Silver (Bakiye: ${yeniSilverBakiyesi})`,
+                        eventCode,
+                        eventName,
+                        source: "currency",
+                        confidence: "high",
+                        zaman: new Date().toLocaleTimeString()
+                    });
+                }
+            }
+            sonSilverBakiyesi = yeniSilverBakiyesi;
+        }
+        return;
+    }
+
+    if (eventCode === 62) {
+        // DISABLED: Event 62 TakeSilver - params['5'] yanlış değer (backup/system silver)
+        // Silver tracking şimdilik disable edildi - doğru event bulunacak
+        return;
+    }
+
+    if (eventCode === 82) {
+        // Fame mekanik (Combat Fame vs Normal Fame) ayrı işleniyor
+        // TODO: Başka event veya backup mekanizma ile fame tracking yapılacak
+        return;
+    }
 
     // --- ⚔️ ADIM 1: SAVAŞ ---
     if (eventCode === 6) {
@@ -396,7 +476,7 @@ aoNet.events.on(aoNet.AODecoder.messageType.Event, (context) => {
             // YENİ: Gümüş (Silver) Kontrolü
             if (esyaId === "48") {
                 totalSilver += miktar;
-                console.log(`[💰] Silver Kazanıldı: +${miktar} (Toplam: ${totalSilver})`);
+                console.log(`[💰] Silver Kazanıldı (Event 61): +${miktar} (Toplam: ${totalSilver})`);
                 webSitesineGonder({ 
                     tur: "Ekonomi", 
                     islem: "💰 Silver", 
@@ -405,7 +485,6 @@ aoNet.events.on(aoNet.AODecoder.messageType.Event, (context) => {
                     eventName,
                     source: "gather",
                     confidence: "high",
-                    totalSilver: totalSilver, // Sayacı güncellemesi için
                     zaman: new Date().toLocaleTimeString() 
                 });
             } 
@@ -428,12 +507,14 @@ aoNet.events.on(aoNet.AODecoder.messageType.Event, (context) => {
 
     // --- 🎯 YENİ: YÜKSEK KESİNLİK LOOT EVENT SINIFLANDIRMASI ---
     else if (myPlayerId !== null && GUVENLI_LOOT_EVENTLERI.has(eventCode)) {
-        const values = Object.values(params);
-        const benBuOlaydaVarim = values.includes(myPlayerId) || params['0'] === myPlayerId || params['6'] === myPlayerId;
-        if (!benBuOlaydaVarim) return;
+        const benBuOlaydaVarim = olaydaOyuncuVarMi(params, myPlayerId);
+        const kimlikKontrolunuEsnet = ESNEK_KIMLIK_GEREKTIRMEYEN_EVENTLER.has(eventCode);
+        if (!benBuOlaydaVarim && !kimlikKontrolunuEsnet) return;
 
         const bulunanItemlar = lootDetayiOlustur(eventCode, params);
         const source = EVENT_SOURCE_MAP[eventCode] || "loot";
+
+        if (!benBuOlaydaVarim && bulunanItemlar.length === 0) return;
 
         if (bulunanItemlar.length > 0) {
             const detay = bulunanItemlar
@@ -442,7 +523,7 @@ aoNet.events.on(aoNet.AODecoder.messageType.Event, (context) => {
                 .join(", ");
             webSitesineGonder({
                 tur: "Ekonomi",
-                islem: "🎒 Loot Event",
+                islem: eventCode === 26 ? "🎒 Envantere Eklendi" : "🎒 Loot Event",
                 detay,
                 eventCode,
                 eventName,
@@ -469,8 +550,8 @@ aoNet.events.on(aoNet.AODecoder.messageType.Event, (context) => {
 
 function lootOperasyonuIsle(context, tur) {
     const params = context.parameters || {};
-    const operationCode = params['253'];
-    if (!operationCode || !GUVENLI_LOOT_OPERASYONLARI.has(operationCode)) return;
+    const operationCode = Number(params['253']);
+    if (!Number.isFinite(operationCode) || !GUVENLI_LOOT_OPERASYONLARI.has(operationCode)) return;
 
     const operationName = operationAdiBul(operationCode);
     const bulunanItemlar = lootOzetiUret(params);

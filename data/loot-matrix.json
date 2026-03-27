@@ -6,20 +6,6 @@
   },
   "events": [
     {
-      "code": 26,
-      "name": "InventoryPutItem",
-      "source": "inventory",
-      "confidence": "high",
-      "description": "Envantere item eklendi"
-    },
-    {
-      "code": 27,
-      "name": "InventoryDeleteItem",
-      "source": "inventory",
-      "confidence": "high",
-      "description": "Envanterden item cikarildi"
-    },
-    {
       "code": 61,
       "name": "HarvestFinished",
       "source": "gather",
