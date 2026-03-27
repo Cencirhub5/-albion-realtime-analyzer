@@ -1,0 +1,13 @@
+{
+  "scripts": {
+    "start": "node server.js",
+    "check": "node --check server.js",
+    "update:catalog": "node scripts/update-catalog.js"
+  },
+  "dependencies": {
+    "ao-network": "^2.0.1",
+    "cap": "^0.2.1",
+    "photon-packet-parser": "^0.0.19",
+    "ws": "^8.20.0"
+  }
+}

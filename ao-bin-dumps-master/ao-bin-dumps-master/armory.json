@@ -1,0 +1,1125 @@
+{
+  "?xml": {
+    "@version": "1.0",
+    "@encoding": "utf-8"
+  },
+  "armory": {
+    "@xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+    "@xsi:noNamespaceSchemaLocation": "armory.xsd",
+    "tagdefinitions": {
+      "taggroup": [
+        {
+          "@id": "groupsize",
+          "@name": "@ARMORY_TAG_GROUP_SIZE",
+          "tag": [
+            {
+              "@id": "solo",
+              "@name": "@ARMORY_TAG_GROUP_SIZE_SOLO"
+            },
+            {
+              "@id": "small_group",
+              "@name": "@ARMORY_TAG_GROUP_SIZE_SMALL"
+            },
+            {
+              "@id": "medium_group",
+              "@name": "@ARMORY_TAG_GROUP_SIZE_MEDIUM"
+            },
+            {
+              "@id": "large_group",
+              "@name": "@ARMORY_TAG_GROUP_SIZE_LARGE"
+            },
+            {
+              "@id": "zerg",
+              "@name": "@ARMORY_TAG_GROUP_SIZE_ZERG"
+            }
+          ]
+        },
+        {
+          "@id": "activitytype",
+          "@name": "@ARMORY_TAG_GROUP_ACTIVITY_TYPE",
+          "tag": [
+            {
+              "@id": "pve",
+              "@name": "@ARMORY_TAG_ACTIVITY_TYPE_PVE"
+            },
+            {
+              "@id": "pvp",
+              "@name": "@ARMORY_TAG_ACTIVITY_TYPE_PVP"
+            },
+            {
+              "@id": "gathering",
+              "@name": "@ARMORY_TAG_ACTIVITY_TYPE_GATHERING"
+            },
+            {
+              "@id": "openworld",
+              "@name": "@ARMORY_TAG_ACTIVITY_TYPE_OPENWORLD"
+            },
+            {
+              "@id": "instanced",
+              "@name": "@ARMORY_TAG_ACTIVITY_TYPE_INSTANCED"
+            },
+            {
+              "@id": "dungeons",
+              "@name": "@ARMORY_TAG_ACTIVITY_TYPE_DUNGEONS"
+            },
+            {
+              "@id": "competitive",
+              "@name": "@ARMORY_TAG_ACTIVITY_TYPE_COMPETITIVE"
+            },
+            {
+              "@id": "conquering",
+              "@name": "@ARMORY_TAG_ACTIVITY_TYPE_CONQUERING"
+            }
+          ]
+        }
+      ]
+    },
+    "activities": {
+      "activity": [
+        {
+          "@uniquename": "openworldsolo",
+          "@image": "",
+          "tags": {
+            "tag": [
+              {
+                "@ref": "solo"
+              },
+              {
+                "@ref": "small_group"
+              },
+              {
+                "@ref": "openworld"
+              },
+              {
+                "@ref": "pve"
+              },
+              {
+                "@ref": "pvp"
+              }
+            ]
+          },
+          "datasetrequirements": {
+            "or": {
+              "and": [
+                {
+                  "duration": {
+                    "@mindurationminutes": "5"
+                  },
+                  "metric": {
+                    "@name": "pvpfamegained",
+                    "@minvalue": "25000"
+                  }
+                },
+                {
+                  "duration": {
+                    "@mindurationminutes": "5"
+                  },
+                  "metric": {
+                    "@name": "pvefamegained",
+                    "@minvalue": "100000"
+                  }
+                }
+              ]
+            }
+          }
+        },
+        {
+          "@uniquename": "openworldgroup",
+          "@image": "",
+          "tags": {
+            "tag": [
+              {
+                "@ref": "medium_group"
+              },
+              {
+                "@ref": "openworld"
+              },
+              {
+                "@ref": "pve"
+              },
+              {
+                "@ref": "pvp"
+              }
+            ]
+          },
+          "datasetrequirements": {
+            "or": {
+              "and": [
+                {
+                  "duration": {
+                    "@mindurationminutes": "5"
+                  },
+                  "metric": {
+                    "@name": "pvpfamegained",
+                    "@minvalue": "50000"
+                  }
+                },
+                {
+                  "duration": {
+                    "@mindurationminutes": "10"
+                  },
+                  "metric": {
+                    "@name": "pvefamegained",
+                    "@minvalue": "100000"
+                  }
+                }
+              ]
+            }
+          }
+        },
+        {
+          "@uniquename": "openworldlargegroup",
+          "@image": "",
+          "tags": {
+            "tag": [
+              {
+                "@ref": "large_group"
+              },
+              {
+                "@ref": "openworld"
+              },
+              {
+                "@ref": "pve"
+              },
+              {
+                "@ref": "pvp"
+              }
+            ]
+          },
+          "datasetrequirements": {
+            "or": {
+              "and": [
+                {
+                  "duration": {
+                    "@mindurationminutes": "5"
+                  },
+                  "metric": {
+                    "@name": "pvpfamegained",
+                    "@minvalue": "50000"
+                  }
+                },
+                {
+                  "duration": {
+                    "@mindurationminutes": "5"
+                  },
+                  "metric": {
+                    "@name": "pvefamegained",
+                    "@minvalue": "100000"
+                  }
+                }
+              ]
+            }
+          }
+        },
+        {
+          "@uniquename": "zvz",
+          "@image": "",
+          "tags": {
+            "tag": [
+              {
+                "@ref": "zerg"
+              },
+              {
+                "@ref": "openworld"
+              },
+              {
+                "@ref": "pve"
+              },
+              {
+                "@ref": "pvp"
+              },
+              {
+                "@ref": "conquering"
+              }
+            ]
+          },
+          "datasetrequirements": {
+            "and": {
+              "duration": {
+                "@mindurationminutes": "5"
+              },
+              "or": {
+                "metric": [
+                  {
+                    "@name": "damagedealt",
+                    "@minvalue": "20000"
+                  },
+                  {
+                    "@name": "healingdone",
+                    "@minvalue": "50000"
+                  },
+                  {
+                    "@name": "damagereceived",
+                    "@minvalue": "20000"
+                  },
+                  {
+                    "@name": "kills",
+                    "@minvalue": "2"
+                  },
+                  {
+                    "@name": "pvpfamegained",
+                    "@minvalue": "500000"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "@uniquename": "corrupteddungeons",
+          "@image": "",
+          "tags": {
+            "tag": [
+              {
+                "@ref": "solo"
+              },
+              {
+                "@ref": "instanced"
+              },
+              {
+                "@ref": "pve"
+              },
+              {
+                "@ref": "pvp"
+              },
+              {
+                "@ref": "competitive"
+              }
+            ]
+          },
+          "datasetrequirements": {
+            "or": {
+              "metric": [
+                {
+                  "@name": "successwin",
+                  "@minvalue": "1"
+                },
+                {
+                  "@name": "kills",
+                  "@minvalue": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "@uniquename": "hellgate2v2",
+          "@image": "",
+          "tags": {
+            "tag": [
+              {
+                "@ref": "small_group"
+              },
+              {
+                "@ref": "instanced"
+              },
+              {
+                "@ref": "pve"
+              },
+              {
+                "@ref": "pvp"
+              },
+              {
+                "@ref": "competitive"
+              }
+            ]
+          },
+          "datasetrequirements": {
+            "or": {
+              "metric": [
+                {
+                  "@name": "successwin",
+                  "@minvalue": "1"
+                },
+                {
+                  "@name": "kills",
+                  "@minvalue": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "@uniquename": "hellgate5v5",
+          "@image": "",
+          "tags": {
+            "tag": [
+              {
+                "@ref": "medium_group"
+              },
+              {
+                "@ref": "instanced"
+              },
+              {
+                "@ref": "pve"
+              },
+              {
+                "@ref": "pvp"
+              },
+              {
+                "@ref": "competitive"
+              }
+            ]
+          },
+          "datasetrequirements": {
+            "or": {
+              "metric": [
+                {
+                  "@name": "successwin",
+                  "@minvalue": "1"
+                },
+                {
+                  "@name": "kills",
+                  "@minvalue": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "@uniquename": "crystalleague5v5",
+          "@image": "",
+          "tags": {
+            "tag": [
+              {
+                "@ref": "medium_group"
+              },
+              {
+                "@ref": "instanced"
+              },
+              {
+                "@ref": "pvp"
+              },
+              {
+                "@ref": "competitive"
+              }
+            ]
+          },
+          "datasetrequirements": {
+            "and": {
+              "duration": {
+                "@mindurationminutes": "5"
+              },
+              "or": {
+                "metric": [
+                  {
+                    "@name": "damagedealt",
+                    "@minvalue": "10000"
+                  },
+                  {
+                    "@name": "healingdone",
+                    "@minvalue": "10000"
+                  },
+                  {
+                    "@name": "damagereceived",
+                    "@minvalue": "10000"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "@uniquename": "crystalleague20v20",
+          "@image": "",
+          "tags": {
+            "tag": [
+              {
+                "@ref": "large_group"
+              },
+              {
+                "@ref": "instanced"
+              },
+              {
+                "@ref": "pvp"
+              },
+              {
+                "@ref": "competitive"
+              }
+            ]
+          },
+          "datasetrequirements": {
+            "and": {
+              "duration": {
+                "@mindurationminutes": "5"
+              },
+              "or": {
+                "metric": [
+                  {
+                    "@name": "damagedealt",
+                    "@minvalue": "10000"
+                  },
+                  {
+                    "@name": "healingdone",
+                    "@minvalue": "10000"
+                  },
+                  {
+                    "@name": "damagereceived",
+                    "@minvalue": "10000"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "@uniquename": "crystalarena",
+          "@image": "",
+          "tags": {
+            "tag": [
+              {
+                "@ref": "medium_group"
+              },
+              {
+                "@ref": "instanced"
+              },
+              {
+                "@ref": "pvp"
+              },
+              {
+                "@ref": "competitive"
+              }
+            ]
+          },
+          "datasetrequirements": {
+            "and": {
+              "duration": {
+                "@mindurationminutes": "5"
+              },
+              "or": {
+                "metric": [
+                  {
+                    "@name": "damagedealt",
+                    "@minvalue": "10000"
+                  },
+                  {
+                    "@name": "healingdone",
+                    "@minvalue": "10000"
+                  },
+                  {
+                    "@name": "damagereceived",
+                    "@minvalue": "10000"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "@uniquename": "arena",
+          "@image": "",
+          "tags": {
+            "tag": [
+              {
+                "@ref": "medium_group"
+              },
+              {
+                "@ref": "instanced"
+              },
+              {
+                "@ref": "pvp"
+              },
+              {
+                "@ref": "competitive"
+              }
+            ]
+          },
+          "datasetrequirements": {
+            "and": {
+              "duration": {
+                "@mindurationminutes": "5"
+              },
+              "or": {
+                "metric": [
+                  {
+                    "@name": "damagedealt",
+                    "@minvalue": "10000"
+                  },
+                  {
+                    "@name": "healingdone",
+                    "@minvalue": "10000"
+                  },
+                  {
+                    "@name": "damagereceived",
+                    "@minvalue": "10000"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "@uniquename": "mists",
+          "@image": "",
+          "tags": {
+            "tag": [
+              {
+                "@ref": "small_group"
+              },
+              {
+                "@ref": "instanced"
+              },
+              {
+                "@ref": "pve"
+              },
+              {
+                "@ref": "pvp"
+              },
+              {
+                "@ref": "gathering"
+              }
+            ]
+          },
+          "datasetrequirements": {
+            "or": {
+              "and": [
+                {
+                  "duration": {
+                    "@mindurationminutes": "5"
+                  },
+                  "metric": {
+                    "@name": "pvpfamegained",
+                    "@minvalue": "25000"
+                  }
+                },
+                {
+                  "duration": {
+                    "@mindurationminutes": "5"
+                  },
+                  "or": {
+                    "metric": [
+                      {
+                        "@name": "pvefamegained",
+                        "@minvalue": "50000"
+                      },
+                      {
+                        "@name": "mobskilled",
+                        "@minvalue": "20"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        },
+        {
+          "@uniquename": "factionwarfare",
+          "@image": "",
+          "tags": {
+            "tag": [
+              {
+                "@ref": "medium_group"
+              },
+              {
+                "@ref": "large_group"
+              },
+              {
+                "@ref": "zerg"
+              },
+              {
+                "@ref": "openworld"
+              },
+              {
+                "@ref": "pvp"
+              },
+              {
+                "@ref": "conquering"
+              }
+            ]
+          },
+          "datasetrequirements": {
+            "and": {
+              "duration": {
+                "@mindurationminutes": "5"
+              },
+              "or": {
+                "metric": [
+                  {
+                    "@name": "damagedealt",
+                    "@minvalue": "20000"
+                  },
+                  {
+                    "@name": "healingdone",
+                    "@minvalue": "50000"
+                  },
+                  {
+                    "@name": "damagereceived",
+                    "@minvalue": "20000"
+                  },
+                  {
+                    "@name": "kills",
+                    "@minvalue": "2"
+                  },
+                  {
+                    "@name": "pvpfamegained",
+                    "@minvalue": "100000"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "@uniquename": "castle",
+          "@image": "",
+          "tags": {
+            "tag": [
+              {
+                "@ref": "large_group"
+              },
+              {
+                "@ref": "zerg"
+              },
+              {
+                "@ref": "openworld"
+              },
+              {
+                "@ref": "pvp"
+              },
+              {
+                "@ref": "conquering"
+              }
+            ]
+          },
+          "datasetrequirements": {
+            "and": {
+              "duration": {
+                "@mindurationminutes": "5"
+              },
+              "or": {
+                "metric": [
+                  {
+                    "@name": "damagedealt",
+                    "@minvalue": "10000"
+                  },
+                  {
+                    "@name": "healingdone",
+                    "@minvalue": "25000"
+                  },
+                  {
+                    "@name": "damagereceived",
+                    "@minvalue": "10000"
+                  },
+                  {
+                    "@name": "kills",
+                    "@minvalue": "2"
+                  },
+                  {
+                    "@name": "pvpfamegained",
+                    "@minvalue": "50000"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "@uniquename": "fortification",
+          "@image": "",
+          "tags": {
+            "tag": [
+              {
+                "@ref": "large_group"
+              },
+              {
+                "@ref": "zerg"
+              },
+              {
+                "@ref": "openworld"
+              },
+              {
+                "@ref": "pvp"
+              },
+              {
+                "@ref": "conquering"
+              }
+            ]
+          },
+          "datasetrequirements": {
+            "and": {
+              "duration": {
+                "@mindurationminutes": "5"
+              },
+              "or": {
+                "metric": [
+                  {
+                    "@name": "damagedealt",
+                    "@minvalue": "10000"
+                  },
+                  {
+                    "@name": "healingdone",
+                    "@minvalue": "25000"
+                  },
+                  {
+                    "@name": "damagereceived",
+                    "@minvalue": "10000"
+                  },
+                  {
+                    "@name": "kills",
+                    "@minvalue": "2"
+                  },
+                  {
+                    "@name": "pvpfamegained",
+                    "@minvalue": "50000"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "@uniquename": "avalonianroads",
+          "@image": "",
+          "tags": {
+            "tag": [
+              {
+                "@ref": "solo"
+              },
+              {
+                "@ref": "small_group"
+              },
+              {
+                "@ref": "medium_group"
+              },
+              {
+                "@ref": "instanced"
+              },
+              {
+                "@ref": "pvp"
+              },
+              {
+                "@ref": "pve"
+              }
+            ]
+          },
+          "datasetrequirements": {
+            "and": {
+              "duration": {
+                "@mindurationminutes": "5"
+              },
+              "or": {
+                "metric": [
+                  {
+                    "@name": "pvpfamegained",
+                    "@minvalue": "25000"
+                  },
+                  {
+                    "@name": "pvefamegained",
+                    "@minvalue": "50000"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "@uniquename": "gathering",
+          "@image": "",
+          "tags": {
+            "tag": [
+              {
+                "@ref": "solo"
+              },
+              {
+                "@ref": "openworld"
+              },
+              {
+                "@ref": "gathering"
+              }
+            ]
+          },
+          "datasetrequirements": {
+            "duration": {
+              "@mindurationminutes": "15"
+            }
+          }
+        },
+        {
+          "@uniquename": "solodungeons",
+          "@image": "",
+          "tags": {
+            "tag": [
+              {
+                "@ref": "solo"
+              },
+              {
+                "@ref": "small_group"
+              },
+              {
+                "@ref": "instanced"
+              },
+              {
+                "@ref": "dungeons"
+              },
+              {
+                "@ref": "pve"
+              }
+            ]
+          },
+          "datasetrequirements": {
+            "and": {
+              "duration": {
+                "@mindurationminutes": "5"
+              },
+              "metric": {
+                "@name": "mobskilled",
+                "@minvalue": "20"
+              }
+            }
+          }
+        },
+        {
+          "@uniquename": "groupdungeons",
+          "@image": "",
+          "tags": {
+            "tag": [
+              {
+                "@ref": "small_group"
+              },
+              {
+                "@ref": "medium_group"
+              },
+              {
+                "@ref": "instanced"
+              },
+              {
+                "@ref": "dungeons"
+              },
+              {
+                "@ref": "pve"
+              }
+            ]
+          },
+          "datasetrequirements": {
+            "or": {
+              "duration": {
+                "@mindurationminutes": "5"
+              },
+              "metric": {
+                "@name": "mobskilled",
+                "@minvalue": "20"
+              }
+            }
+          }
+        },
+        {
+          "@uniquename": "avaloniandungeons",
+          "@image": "",
+          "tags": {
+            "tag": [
+              {
+                "@ref": "large_group"
+              },
+              {
+                "@ref": "instanced"
+              },
+              {
+                "@ref": "dungeons"
+              },
+              {
+                "@ref": "pve"
+              }
+            ]
+          },
+          "datasetrequirements": {
+            "or": {
+              "duration": {
+                "@mindurationminutes": "5"
+              },
+              "metric": {
+                "@name": "mobskilled",
+                "@minvalue": "20"
+              }
+            }
+          }
+        },
+        {
+          "@uniquename": "hardcoreexpeditions",
+          "@image": "",
+          "tags": {
+            "tag": [
+              {
+                "@ref": "medium_group"
+              },
+              {
+                "@ref": "instanced"
+              },
+              {
+                "@ref": "dungeons"
+              },
+              {
+                "@ref": "pve"
+              }
+            ]
+          },
+          "datasetrequirements": {
+            "or": {
+              "duration": {
+                "@mindurationminutes": "5"
+              },
+              "metric": {
+                "@name": "mobskilled",
+                "@minvalue": "20"
+              }
+            }
+          }
+        },
+        {
+          "@uniquename": "homebase",
+          "@image": "",
+          "tags": {
+            "tag": [
+              {
+                "@ref": "medium_group"
+              },
+              {
+                "@ref": "openworld"
+              },
+              {
+                "@ref": "pve"
+              }
+            ]
+          },
+          "datasetrequirements": {
+            "and": {
+              "duration": {
+                "@mindurationminutes": "5"
+              },
+              "metric": {
+                "@name": "pvefamegained",
+                "@minvalue": "500000"
+              }
+            }
+          }
+        },
+        {
+          "@uniquename": "tracking",
+          "@image": "",
+          "tags": {
+            "tag": [
+              {
+                "@ref": "solo"
+              },
+              {
+                "@ref": "small_group"
+              },
+              {
+                "@ref": "medium_group"
+              },
+              {
+                "@ref": "openworld"
+              },
+              {
+                "@ref": "pve"
+              },
+              {
+                "@ref": "gathering"
+              }
+            ]
+          },
+          "datasetrequirements": {
+            "metric": {
+              "@name": "successwin",
+              "@minvalue": "1"
+            }
+          }
+        },
+        {
+          "@uniquename": "helldungeons2v2",
+          "@image": "",
+          "tags": {
+            "tag": [
+              {
+                "@ref": "small_group"
+              },
+              {
+                "@ref": "instanced"
+              },
+              {
+                "@ref": "dungeons"
+              },
+              {
+                "@ref": "pvp"
+              },
+              {
+                "@ref": "pve"
+              }
+            ]
+          },
+          "datasetrequirements": {
+            "or": {
+              "and": {
+                "duration": {
+                  "@mindurationminutes": "5"
+                },
+                "or": {
+                  "metric": [
+                    {
+                      "@name": "pvpfamegained",
+                      "@minvalue": "1"
+                    },
+                    {
+                      "@name": "kills",
+                      "@minvalue": "1"
+                    },
+                    {
+                      "@name": "pvefamegained",
+                      "@minvalue": "100000"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        {
+          "@uniquename": "helldungeons3v3",
+          "@image": "",
+          "tags": {
+            "tag": [
+              {
+                "@ref": "small_group"
+              },
+              {
+                "@ref": "instanced"
+              },
+              {
+                "@ref": "dungeons"
+              },
+              {
+                "@ref": "pvp"
+              },
+              {
+                "@ref": "pve"
+              }
+            ]
+          },
+          "datasetrequirements": {
+            "and": {
+              "duration": {
+                "@mindurationminutes": "5"
+              },
+              "or": {
+                "metric": [
+                  {
+                    "@name": "pvpfamegained",
+                    "@minvalue": "1"
+                  },
+                  {
+                    "@name": "kills",
+                    "@minvalue": "1"
+                  },
+                  {
+                    "@name": "pvefamegained",
+                    "@minvalue": "100000"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

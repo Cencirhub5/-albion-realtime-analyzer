@@ -1,0 +1,101 @@
+{
+  "meta": {
+    "name": "Albion Loot Event/Operation Matrix",
+    "version": "2026-03-27",
+    "source": "Revalto ao-network events.js and operations.js"
+  },
+  "events": [
+    {
+      "code": 26,
+      "name": "InventoryPutItem",
+      "source": "inventory",
+      "confidence": "high",
+      "description": "Envantere item eklendi"
+    },
+    {
+      "code": 27,
+      "name": "InventoryDeleteItem",
+      "source": "inventory",
+      "confidence": "high",
+      "description": "Envanterden item cikarildi"
+    },
+    {
+      "code": 61,
+      "name": "HarvestFinished",
+      "source": "gather",
+      "confidence": "high",
+      "description": "Gather tamamlandi, item/silver gelebilir"
+    },
+    {
+      "code": 98,
+      "name": "NewLoot",
+      "source": "loot",
+      "confidence": "high",
+      "description": "Yeni loot olayi"
+    },
+    {
+      "code": 99,
+      "name": "AttachItemContainer",
+      "source": "container",
+      "confidence": "high",
+      "description": "Container baglandi"
+    },
+    {
+      "code": 100,
+      "name": "DetachItemContainer",
+      "source": "container",
+      "confidence": "high",
+      "description": "Container ayrildi"
+    },
+    {
+      "code": 387,
+      "name": "NewLootChest",
+      "source": "chest",
+      "confidence": "high",
+      "description": "Yeni loot chest spawn"
+    },
+    {
+      "code": 388,
+      "name": "UpdateLootChest",
+      "source": "chest",
+      "confidence": "high",
+      "description": "Loot chest guncellendi"
+    },
+    {
+      "code": 389,
+      "name": "LootChestOpened",
+      "source": "chest",
+      "confidence": "high",
+      "description": "Loot chest acildi"
+    },
+    {
+      "code": 607,
+      "name": "PickupFromPiledObjectStart",
+      "source": "piled",
+      "confidence": "high",
+      "description": "Piled object pickup basladi"
+    },
+    {
+      "code": 608,
+      "name": "PickupFromPiledObjectCancel",
+      "source": "piled",
+      "confidence": "high",
+      "description": "Piled object pickup iptal"
+    },
+    {
+      "code": 609,
+      "name": "PickupFromPiledObjectReset",
+      "source": "piled",
+      "confidence": "high",
+      "description": "Piled object pickup reset"
+    },
+    {
+      "code": 610,
+      "name": "PickupFromPiledObjectFinished",
+      "source": "piled",
+      "confidence": "high",
+      "description": "Piled object pickup tamamlandi"
+    }
+  ],
+  "operations": []
+}

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Albion Ultimate Radar</title>
+    <style>
+        body { background: #0b0b0b; color: #eee; font-family: 'Segoe UI', sans-serif; padding: 20px; }
+        .stats { display: flex; gap: 20px; justify-content: center; margin-bottom: 25px; }
+        .box { background: #151515; padding: 20px; border-radius: 10px; text-align: center; width: 220px; border: 2px solid #333; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        .fame { border-color: #f1c40f; color: #f1c40f; }
+        .silver { border-color: #2ecc71; color: #2ecc71; }
+        .dps-dealt { border-color: #3498db; color: #3498db; }
+        .dps-taken { border-color: #e74c3c; color: #e74c3c; }
+        .container { display: flex; gap: 20px; }
+        .panel { background: #121212; padding: 15px; border-radius: 8px; width: 50%; height: 600px; overflow-y: auto; border: 1px solid #222; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #1a1a1a; position: sticky; top: 0; padding: 10px; text-align: left; color: #888; }
+        td { padding: 10px; border-bottom: 1px solid #222; text-align: left; }
+        .vurdun { color: #2ecc71; font-weight: bold; } 
+        .aldin { color: #e74c3c; font-weight: bold; } 
+        .eco { color: #f39c12; }
+    </style>
+</head>
+<body>
+    <div class="stats">
+        <div class="box fame">TOTAL FAME<br><span id="f-val" style="font-size: 2.2rem; font-family: monospace;">0</span></div>
+        <div class="box silver">TOTAL SILVER<br><span id="s-val" style="font-size: 2.2rem; font-family: monospace;">0</span></div>
+        <div class="box dps-dealt">DPS DEALT<br><span id="dps-dealt" style="font-size: 2.2rem; font-family: monospace;">0</span></div>
+        <div class="box dps-taken">DPS TAKEN<br><span id="dps-taken" style="font-size: 2.2rem; font-family: monospace;">0</span></div>
+    </div>
+    <div class="container">
+        <div class="panel">
+            <h3 style="color:#e74c3c; border-bottom: 1px solid #333; padding-bottom: 10px;">⚔️ COMBAT LOG</h3>
+            <div style="display:flex; gap:10px; align-items:center; margin-bottom:10px;">
+                <label for="combat-filter" style="color:#aaa; font-size:12px;">Filter:</label>
+                <select id="combat-filter" style="background:#1a1a1a; color:#eee; border:1px solid #333; padding:4px 8px; border-radius:6px;">
+                    <option value="all">All</option>
+                    <option value="dealt">Dealt</option>
+                    <option value="taken">Taken</option>
+                </select>
+                <label for="dps-window" style="color:#aaa; font-size:12px;">DPS Window:</label>
+                <select id="dps-window" style="background:#1a1a1a; color:#eee; border:1px solid #333; padding:4px 8px; border-radius:6px;">
+                    <option value="s5">5s</option>
+                    <option value="s10" selected>10s</option>
+                    <option value="s30">30s</option>
+                </select>
+            </div>
+            <table id="s-tab"><thead><tr><th>Saat</th><th>İşlem</th><th>Detay</th><th>Meta</th></tr></thead><tbody id="s-body"></tbody></table>
+        </div>
+        <div class="panel">
+            <h3 style="color:#2ecc71; border-bottom: 1px solid #333; padding-bottom: 10px;">💰 ECONOMY LOG</h3>
+            <div style="display:flex; gap:10px; align-items:center; margin-bottom:10px;">
+                <label for="eco-filter" style="color:#aaa; font-size:12px;">Filter:</label>
+                <select id="eco-filter" style="background:#1a1a1a; color:#eee; border:1px solid #333; padding:4px 8px; border-radius:6px;">
+                    <option value="all">All</option>
+                    <option value="gather">Gather</option>
+                    <option value="chest">Chest</option>
+                    <option value="piled">Piled</option>
+                    <option value="inventory">Inventory</option>
+                    <option value="container">Container</option>
+                    <option value="operation">Operation</option>
+                </select>
+            </div>
+            <table id="e-tab"><thead><tr><th>Saat</th><th>İşlem</th><th>Detay</th><th>Meta</th></tr></thead><tbody id="e-body"></tbody></table>
+        </div>
+    </div>
+    <script>
+        const ws = new WebSocket('ws://localhost:8080');
+        ws.onmessage = (e) => {
+            const data = JSON.parse(e.data);
+            
+            // Eğer sayaç verisi geldiyse ekranda güncelle
+            if (data.totalFame !== undefined) document.getElementById('f-val').innerText = data.totalFame.toLocaleString();
+            if (data.totalSilver !== undefined) document.getElementById('s-val').innerText = data.totalSilver.toLocaleString();
+            if (data.dps) {
+                const secim = document.getElementById('dps-window').value;
+                const dealt = data.dps.dealt?.[secim] ?? 0;
+                const taken = data.dps.taken?.[secim] ?? 0;
+                document.getElementById('dps-dealt').innerText = Number(dealt).toLocaleString();
+                document.getElementById('dps-taken').innerText = Number(taken).toLocaleString();
+            }
+            
+            const eventMeta = data.eventCode !== undefined ? `E:${data.eventCode} ${data.eventName || ''}` : '';
+            const opMeta = data.operationCode !== undefined ? `O:${data.operationCode} ${data.operationName || ''}` : '';
+            const sourceMeta = data.source ? `src:${data.source}` : '';
+            const confMeta = data.confidence ? `cf:${data.confidence}` : '';
+            const meta = [eventMeta, opMeta, sourceMeta, confMeta].filter(Boolean).join(' | ');
+
+            if (data.tur === 'Ekonomi') {
+                const activeFilter = document.getElementById('eco-filter').value;
+                if (activeFilter !== 'all' && data.source !== activeFilter) return;
+            }
+
+            if (data.tur === 'Savas') {
+                const combatFilter = document.getElementById('combat-filter').value;
+                if (combatFilter !== 'all' && data.combatType !== combatFilter) return;
+            }
+
+            const tr = document.createElement('tr');
+            let colorClass = data.islem.includes('Vurdun') ? 'vurdun' : (data.islem.includes('Aldın') ? 'aldin' : 'eco');
+            tr.innerHTML = `<td>${data.zaman}</td><td class="${colorClass}">${data.islem}</td><td>${data.detay}</td><td>${meta}</td>`;
+            
+            // Hangi tabloya gideceğini seç ve en üste ekle
+            const tbody = (data.tur === 'Savas') ? document.getElementById('s-body') : document.getElementById('e-body');
+            tbody.insertBefore(tr, tbody.firstChild);
+            
+            // 30 satırdan sonrasını sil ki tarayıcı kasmasın
+            if(tbody.rows.length > 30) tbody.lastChild.remove();
+        };
+    </script>
+</body>
+</html>
