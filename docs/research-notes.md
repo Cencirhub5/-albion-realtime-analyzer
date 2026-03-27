@@ -34,8 +34,6 @@
 - Event kodu context.parameters['252'] alaninda geliyor.
 - event 6 ile player kimligi kilitlenmesi mevcut akista calisiyor.
 - event 61 ile itemId context.parameters['4'], quantity context.parameters['5'].
-- Silver ozel durumu itemId 48 olarak ele aliniyor.
-- test.js icinde lootchest endpoint adi formatted/lootchest.json olarak geciyor; bu isim/konum riski var, yerelde kok dump dosyasinda lootchests.json bulunuyor.
 
 ### 3) Acik Riskler
 - SPAM_KODLARI statik ve eksik kalabilir.
